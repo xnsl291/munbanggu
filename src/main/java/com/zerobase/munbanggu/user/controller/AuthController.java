@@ -32,7 +32,7 @@ public class AuthController {
 
     @PostMapping("/sign-in")
     public ResponseEntity<TokenResponse> signIn(@RequestBody SignInDto signInDto) {
-        System.out.println(signInDto);
+
         return ResponseEntity.ok(userService.signIn(signInDto));
     }
 

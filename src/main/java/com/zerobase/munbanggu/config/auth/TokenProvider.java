@@ -114,7 +114,7 @@ public class TokenProvider {
         response.addHeader(REFRESH_TOKEN_KEY, AUTHORIZATION_PREFIX + refreshToken);
     }
 
-    public Integer getId(String token) {
+    public Long getId(String token) {
         try {
             Claims claims = Jwts.parserBuilder()
                     .setSigningKey(secretKey)
@@ -122,7 +122,7 @@ public class TokenProvider {
                     .parseClaimsJws(getRawToken(token))
                     .getBody();
 
-            return Integer.parseInt(claims.get("id").toString());
+            return Long.parseLong(claims.get("id").toString());
         } catch (JwtException | NumberFormatException | NullPointerException e) {
             throw new InvalidTokenException("예외");
         }

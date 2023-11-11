@@ -1,6 +1,7 @@
 package com.zerobase.munbanggu.user.controller;
 
 
+import com.zerobase.munbanggu.config.auth.TokenProvider;
 import com.zerobase.munbanggu.user.dto.GetUserDto;
 import com.zerobase.munbanggu.user.dto.UserRegisterDto;
 import com.zerobase.munbanggu.user.model.entity.User;
@@ -30,18 +31,18 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/user")
 public class UserController {
     private static final String AUTH_HEADER = "Authorization";
-    private final JwtService jwtService;
+    private final TokenProvider tokenProvider;
     private final UserService userService;
     @PutMapping("/{user_id}")
     public ResponseEntity<?> updateUser( @RequestHeader(name = AUTH_HEADER) String token,
             @RequestBody GetUserDto getUserDto){
 
-        Optional<User> user = userService.getUser(jwtService.getIdFromToken(token));
+        Optional<User> user = userService.getUser(tokenProvider.getId(token));
         if (user.isPresent()) {
             // 유효한 토큰으로 사용자 정보 가져오기
             return ResponseEntity.ok(
                     userService.updateUser(
-                            jwtService.getIdFromToken(token),
+                            tokenProvider.getId(token),
                             getUserDto
                     )
             );
