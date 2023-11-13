@@ -22,7 +22,7 @@ public class StudyService {
         return studyRepository.save(newStudy);
     }
     private Study convertToEntity(StudyDto studyDto) {
-        // StudyDto를 Study 엔티티로 변환하는 로직 구현
+        // StudyDto를 Study 엔티티로 변환
 
         return Study.builder()
                 .user_id(studyDto.getUserId())
@@ -74,7 +74,15 @@ public class StudyService {
         studyRepository.delete(study);
     }
 
+    public List<Study> searchStudiesByKeyword(String content) {
+        // 키워드가 제목에 포함된 스터디들을 조회
+        return studyRepository.findAllByContent(content);
+    }
     public List<Study> getAllOpenStudies() {
         return studyRepository.findAll();
+    }
+
+    public Study getStudyDetails(Long id) {
+        return studyRepository.findById(id).orElse(null);
     }
 }

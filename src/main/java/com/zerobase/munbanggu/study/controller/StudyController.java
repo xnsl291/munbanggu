@@ -6,17 +6,20 @@ import com.zerobase.munbanggu.study.model.entity.Study;
 import com.zerobase.munbanggu.study.service.StudyService;
 import com.zerobase.munbanggu.user.model.entity.User;
 import com.zerobase.munbanggu.user.service.UserService;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -28,10 +31,18 @@ public class StudyController {
     private final UserService userService;
     private final TokenProvider tokenProvider;
     @PostMapping()
-    public ResponseEntity<Study> openStudy(@RequestHeader(name = "Authorization") String token,@RequestBody StudyDto studyDto) {
+    public ResponseEntity<?> openStudy(@RequestHeader(name = "Authorization") String token,@RequestBody StudyDto studyDto) {
 
-        Study openedStudy = studyService.openStudy(studyDto);
-        return new ResponseEntity<>(openedStudy, HttpStatus.CREATED);
+        Optional<User> user = userService.getUser(tokenProvider.getId(token));
+        if (user.isPresent()) {
+            Study openedStudy = studyService.openStudy(studyDto);
+            return new ResponseEntity<>(openedStudy, HttpStatus.CREATED);
+        }else {
+            // 토큰이 유효하지 않은 경우 처리
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 실패");
+        }
+
+
     }
 
     @PutMapping("{study_id}")
@@ -71,5 +82,23 @@ public class StudyController {
         }
 
     }
+    @GetMapping
+    public ResponseEntity<List<Study>> searchStudiesByKeyword(@RequestParam String keyword) {
+
+        List<Study> studiesByKeyword = studyService.searchStudiesByKeyword(keyword);
+        return new ResponseEntity<>(studiesByKeyword, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Study> getStudyDetails(@PathVariable Long id) {
+        Study study = studyService.getStudyDetails(id);
+        if (study != null) {
+            return new ResponseEntity<>(study, HttpStatus.OK);
+        } else {
+            // 스터디를 찾을 수 없는 경우
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
 
 }
