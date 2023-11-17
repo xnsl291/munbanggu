@@ -1,9 +1,12 @@
 spring:
-
   profiles:
     include:
     - secret
     - oauth
+    - s3
+  servlet:
+    multipart:
+      enabled: true
 
   datasource:
     driver-class-name: org.h2.Driver
@@ -47,7 +50,17 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+
   kakao:
     api:
       baseUrl: https://kapi.kakao.com/v1/payment/ready
       adminKey: 53937b88b5a19ee69356275a66741044
+
+
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
+
