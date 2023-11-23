@@ -1,13 +1,19 @@
 package com.zerobase.munbanggu.user.controller;
 
+import static com.zerobase.munbanggu.common.type.ErrorCode.STUDY_NOT_EXIST;
+import static com.zerobase.munbanggu.common.type.ErrorCode.USER_NOT_EXIST;
+
 import com.zerobase.munbanggu.aws.S3Uploader;
-import com.zerobase.munbanggu.config.auth.TokenProvider;
+import com.zerobase.munbanggu.auth.TokenProvider;
 import com.zerobase.munbanggu.user.dto.GetUserDto;
 import com.zerobase.munbanggu.user.dto.UserRegisterDto;
 import com.zerobase.munbanggu.user.model.entity.User;
-import com.zerobase.munbanggu.user.repository.UserRepository;
 import com.zerobase.munbanggu.user.service.UserService;
+import com.zerobase.munbanggu.common.util.JwtService;
+
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,11 +32,12 @@ public class UserController {
     private final UserService userService;
     private final S3Uploader s3Uploader;
 
-
     @PutMapping("/{user_id}")
     public ResponseEntity<?> updateUser( @RequestHeader(name = AUTH_HEADER) String token,
             @RequestBody GetUserDto getUserDto){
-
+        Map<String, Object> response = new HashMap<>();
+        response.put("errorCode", HttpStatus.NOT_FOUND);
+        response.put("message", USER_NOT_EXIST);
         Optional<User> user = userService.getUser(tokenProvider.getId(token));
         if (user.isPresent()) {
             // 유효한 토큰으로 사용자 정보 가져오기
@@ -42,7 +49,7 @@ public class UserController {
             );
         }else {
             // 토큰이 유효하지 않은 경우 처리
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 실패");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
     }
 
