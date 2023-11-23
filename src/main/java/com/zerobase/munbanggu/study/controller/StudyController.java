@@ -11,11 +11,11 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,28 +26,27 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/study")
 @RequiredArgsConstructor
 public class StudyController {
-
+    private static final String AUTH_HEADER = "Authorization";
     private final StudyService studyService;
     private final UserService userService;
     private final TokenProvider tokenProvider;
+  
     @PostMapping()
-    public ResponseEntity<?> openStudy(@RequestHeader(name = "Authorization") String token,@RequestBody StudyDto studyDto) {
+    public ResponseEntity<?> openStudy(@RequestHeader(name = AUTH_HEADER) String token,@RequestBody StudyDto studyDto) {
 
         Optional<User> user = userService.getUser(tokenProvider.getId(token));
         if (user.isPresent()) {
-            Study openedStudy = studyService.openStudy(studyDto);
-            return new ResponseEntity<>(openedStudy, HttpStatus.CREATED);
+            studyService.openStudy(studyDto);
+            return new ResponseEntity<>( HttpStatus.CREATED);
         }else {
             // 토큰이 유효하지 않은 경우 처리
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 실패");
         }
-
-
     }
 
     @PutMapping("{study_id}")
     public ResponseEntity<?> updateStudy(@PathVariable Long studyId,
-            @RequestHeader(name = "Authorization") String token,
+            @RequestHeader(name = AUTH_HEADER) String token,
             @RequestBody StudyDto updatedStudyDto) {
         if (token == null) {
             // 'Authorization' 헤더가 누락된 경우 처리
@@ -55,8 +54,8 @@ public class StudyController {
         }
         Optional<User> user = userService.getUser(tokenProvider.getId(token));
         if (user.isPresent()) {
-            Study updatedStudy = studyService.updateStudy(studyId, updatedStudyDto);
-            return new ResponseEntity<>(updatedStudy, HttpStatus.OK);
+            studyService.updateStudy(studyId, updatedStudyDto);
+            return new ResponseEntity<>(HttpStatus.OK);
         }else {
             // 토큰이 유효하지 않은 경우 처리
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 실패");
@@ -66,7 +65,7 @@ public class StudyController {
 
     @DeleteMapping("{study_id}")
     public ResponseEntity<String> deleteStudy(@PathVariable Long studyId,
-            @RequestHeader(name = "Authorization") String token
+            @RequestHeader(name = AUTH_HEADER) String token
     ) {
         if (token == null) {
             // 'Authorization' 헤더가 누락된 경우 처리
@@ -116,6 +115,9 @@ public class StudyController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 실패");
         }
     }
+
+
+
 
 
 }
