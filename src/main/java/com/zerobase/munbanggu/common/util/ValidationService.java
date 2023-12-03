@@ -2,11 +2,13 @@ package com.zerobase.munbanggu.common.util;
 
 import com.zerobase.munbanggu.auth.TokenProvider;
 import com.zerobase.munbanggu.common.exception.NotFoundChecklistException;
+import com.zerobase.munbanggu.common.exception.NotFoundStudyException;
 import com.zerobase.munbanggu.common.exception.NotFoundUserException;
 import com.zerobase.munbanggu.common.type.ErrorCode;
 import com.zerobase.munbanggu.study.model.entity.Checklist;
 import com.zerobase.munbanggu.study.repository.ChecklistRepository;
 import com.zerobase.munbanggu.study.repository.StudyRepository;
+import com.zerobase.munbanggu.study.service.StudyService;
 import com.zerobase.munbanggu.user.model.entity.User;
 import com.zerobase.munbanggu.user.repository.UserRepository;
 import com.zerobase.munbanggu.user.service.UserService;
@@ -16,11 +18,11 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class ValidationService {
-  private final UserService userService;
   private final TokenProvider tokenProvider;
   private final ChecklistRepository checklistRepository;
   private final StudyRepository studyRepository;
   private final UserRepository userRepository;
+  private final UserService userService;
 
   /**
    * 토큰에서 유저 정보 추출하기
