@@ -22,6 +22,7 @@ public enum ErrorCode {
     ALREADY_REGISTERED_NICKNAME("이미 등록된 닉네임입니다."),
     INVALID_NICKNAME_FORMAT("잘못된 닉네임 형식입니다."),
     USER_UNMATCHED("사용자의 정보가 일치하지 않습니다"),
+    FAILED_UPLOAD_IMAGE("이미지 업로드에 실패하였습니다"),
 
     // studyboard
     NOT_FOUND_POST("등록되지 않은 게시글 id 입니다."),
