@@ -3,12 +3,15 @@ package com.zerobase.munbanggu.point.controller;
 import com.zerobase.munbanggu.common.exception.NotFoundStudyException;
 import com.zerobase.munbanggu.common.exception.NotFoundUserException;
 import com.zerobase.munbanggu.common.type.ErrorCode;
+import com.zerobase.munbanggu.point.dto.KakaoResponse;
+import com.zerobase.munbanggu.point.service.KakaoPayService;
 import com.zerobase.munbanggu.point.service.PointService;
 import com.zerobase.munbanggu.study.model.entity.Study;
 import com.zerobase.munbanggu.study.repository.StudyRepository;
 import com.zerobase.munbanggu.user.model.entity.User;
 import com.zerobase.munbanggu.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +22,7 @@ public class PointController {
     private final PointService pointService;
     private final StudyRepository studyRepository;
     private final UserRepository userRepository;
+    private final KakaoPayService kakaoPayService;
 //    // 카카오페이결제 요청
 //    @GetMapping("/order/pay")
 //    public @ResponseBody ReadyResponse payReady(@RequestParam(name = "total_amount") int totalAmount, Order order, Model model) {
@@ -71,6 +75,16 @@ public class PointController {
 //    public String payFail() {
 //        return "redirect:/carts";
 //    }
+
+    @PostMapping("/ready")
+    public ResponseEntity<KakaoResponse> readyToKakaoPay() {
+        try {
+            KakaoResponse response = kakaoPayService.kakaoPayReady();
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
   /**
    * 환급 기능

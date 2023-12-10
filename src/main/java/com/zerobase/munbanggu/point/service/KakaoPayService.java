@@ -3,8 +3,6 @@ package com.zerobase.munbanggu.point.service;
 import com.zerobase.munbanggu.point.dto.KakaoResponse;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
@@ -15,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class KakakoPayService {
+public class KakaoPayService {
 
     static final String cid = "TC0ONETIME";
     private final String baseUrl = "${kakao.api.baseUrl}";
