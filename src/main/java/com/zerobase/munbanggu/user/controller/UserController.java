@@ -4,6 +4,7 @@ import com.zerobase.munbanggu.aws.S3Uploader;
 import com.zerobase.munbanggu.auth.TokenProvider;
 import com.zerobase.munbanggu.common.exception.InvalidTokenException;
 import com.zerobase.munbanggu.common.exception.NotFoundUserException;
+import com.zerobase.munbanggu.common.exception.ProfileImageUploadException;
 import com.zerobase.munbanggu.common.type.ErrorCode;
 import com.zerobase.munbanggu.study.dto.JoinStudyDto;
 import com.zerobase.munbanggu.user.dto.GetUserDto;
@@ -77,8 +78,7 @@ public class UserController {
 
             return new ResponseEntity<>(newImageUrl, HttpStatus.OK);
         } catch (IOException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("Failed to upload image", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new ProfileImageUploadException(ErrorCode.FAILED_UPLOAD_IMAGE, e);
         }
     }
 
